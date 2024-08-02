@@ -1,0 +1,52 @@
+{
+  "type": "module",
+  "name": "here-comes-the-moon",
+  "version": "1.0.0",
+  "description": "Light/Dark Switcher",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "scripts": {
+    "watch": "npm-watch",
+    "build": "rollup -c --bundleConfigAsCjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wswmsword/here-comes-the-moon.git"
+  },
+  "author": "wswmsword",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wswmsword/here-comes-the-moon/issues"
+  },
+  "homepage": "https://github.com/wswmsword/here-comes-the-moon#readme",
+  "devDependencies": {
+    "@babel/core": "^7.24.5",
+    "@babel/preset-env": "^7.24.5",
+    "@babel/preset-react": "^7.24.1",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.8",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "npm-watch": "^0.13.0",
+    "rollup": "^4.18.0",
+    "rollup-plugin-postcss": "^4.0.2"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "watch": {
+    "build": {
+      "patterns": [
+        "*"
+      ],
+      "extensions": "css, js",
+      "ignore": [
+        "dist",
+        "node_modules",
+        "examples"
+      ]
+    }
+  }
+}
