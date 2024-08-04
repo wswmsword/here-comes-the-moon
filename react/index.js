@@ -1,6 +1,6 @@
 import React, { forwardRef, useImperativeHandle, useRef } from "react";
 
-export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons = ["🌑", "🌘", "🌗", "🌖", "🌕", "🌔", "🌓", "🌒"], frameTm = 32, dur = 128 }, ref) {
+export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons = ["🌑", "🌘", "🌗", "🌖", "🌕", "🌔", "🌓", "🌒"], frameTm = 32, dur = 128, onEnd = () => {} }, ref) {
   /** 当前月亮编号 */
   const curIRef = useRef(0);
   /** 元素月亮们 */
@@ -76,7 +76,11 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
         moonRefs.current[hiddenI].style.transition = '';
 
         // 新月和满月，结束
-        if (_breakI.some(i => i === curI)) return transformingRef.current = false;
+        if (_breakI.some(i => i === curI)) {
+          transformingRef.current = false;
+          onEnd();
+          return ;
+        }
       }
 
       window.requestAnimationFrame(moonFrame);
