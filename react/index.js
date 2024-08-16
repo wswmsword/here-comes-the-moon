@@ -7,22 +7,22 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
   const moonRefs = useRef([]);
   /** 是否正在动画 */
   const transformingRef = useRef(false);
+  /** 帧元素的 z-index，每一帧递增 */
+  const zIdRef = useRef(0);
 
   const _breakI = [].concat(breakI).filter(n => n != null);
   /** 一共几帧画面 */
   const len = moons.length;
-  const remainCount = Math.ceil(dur / frameTm);
 
   const spanMoons = moons.map((m, i) => {
-    const defaultIOffset = (defaultI - i + len) % len;
-    const isRemain = remainCount >= defaultIOffset;
+    const isCur = defaultI === i;
     return <span
+      onTransitionEnd={hidePrevFrame(i)}
       style={{
         position: "absolute",
         left: 0,
-        visibility: isRemain ? '' : "hidden",
-        opacity: isRemain ? '' : 0,
-        zIndex: isRemain ? (remainCount - defaultIOffset + 1) : null,
+        opacity: isCur ? '' : 0,
+        visibility: isCur ? '' : "hidden",
       }}
       ref={e => moonRefs.current[i] = e}
       key={i}>{m}</span>});
@@ -39,6 +39,16 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
     {spanMoons}
   </span>;
 
+  function hidePrevFrame(i) {
+    return function() {
+      const prevI = (i - 1 + len) % len;
+      moonRefs.current[prevI].style.visibility = "hidden";
+      moonRefs.current[prevI].style.zIndex = '';
+      moonRefs.current[prevI].style.transition = '';
+      moonRefs.current[prevI].style.opacity = 0;
+    }
+  }
+
   function play() {
 
     if (transformingRef.current) return;
@@ -47,6 +57,10 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
 
     let prevTime = document.timeline.currentTime;
     const len = moons.length;
+
+    // 重置 z-index
+    moonRefs.current[curIRef.current].style.zIndex = 0;
+    zIdRef.current = 0;
 
     window.requestAnimationFrame(moonFrame);
 
@@ -58,22 +72,13 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
 
         const curI = (curIRef.current + 1) % len;
         curIRef.current = curI;
+        zIdRef.current += 1;
         
         prevTime = timestamp;
-        moonRefs.current[curI].style.opacity = '';
+        moonRefs.current[curI].style.opacity = 1;
         moonRefs.current[curI].style.visibility = '';
-        moonRefs.current[curI].style.zIndex = remainCount + 1;
+        moonRefs.current[curI].style.zIndex = zIdRef.current;
         moonRefs.current[curI].style.transition = "inherit";
-        for (let i = 0; i < remainCount; ++ i) {
-          const curOffset = remainCount - i;
-          const prevI = (curI - curOffset + len) % len;
-          moonRefs.current[prevI].style.zIndex = remainCount - curOffset + 1;
-        }
-        const hiddenI = ((curI - remainCount - 1) + len) % len;
-        moonRefs.current[hiddenI].style.opacity = 0;
-        moonRefs.current[hiddenI].style.visibility = "hidden";
-        moonRefs.current[hiddenI].style.zIndex = '';
-        moonRefs.current[hiddenI].style.transition = '';
 
         // 新月和满月，结束
         if (_breakI.some(i => i === curI)) {
