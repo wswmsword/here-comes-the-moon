@@ -40,15 +40,17 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
   </span>;
 
   function hidePrevFrame(i) {
-    return function() {
-      const prevI = (i - 1 + len) % len;
-      moonRefs.current[prevI].style.visibility = "hidden";
-      moonRefs.current[prevI].style.zIndex = '';
-      moonRefs.current[prevI].style.transition = '';
-      moonRefs.current[prevI].style.opacity = 0;
-      if (_breakI.some(_i => _i === i) && curIRef.current === i) {
-        transformingRef.current = false;
-        onEnd();
+    return function(e) {
+      if (e.propertyName === "opacity") { // 避免每个过渡动画属性触发回调
+        const prevI = (i - 1 + len) % len;
+        moonRefs.current[prevI].style.visibility = "hidden";
+        moonRefs.current[prevI].style.zIndex = '';
+        moonRefs.current[prevI].style.transition = '';
+        moonRefs.current[prevI].style.opacity = 0;
+        if (_breakI.some(_i => _i === i) && curIRef.current === i) {
+          transformingRef.current = false;
+          onEnd();
+        }
       }
     }
   }
