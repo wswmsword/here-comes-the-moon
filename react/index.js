@@ -46,6 +46,10 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
       moonRefs.current[prevI].style.zIndex = '';
       moonRefs.current[prevI].style.transition = '';
       moonRefs.current[prevI].style.opacity = 0;
+      if (_breakI.some(_i => _i === i) && curIRef.current === i) {
+        transformingRef.current = false;
+        onEnd();
+      }
     }
   }
 
@@ -81,11 +85,7 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
         moonRefs.current[curI].style.transition = "inherit";
 
         // 新月和满月，结束
-        if (_breakI.some(i => i === curI)) {
-          transformingRef.current = false;
-          onEnd();
-          return ;
-        }
+        if (_breakI.some(i => i === curI)) return ;
       }
 
       window.requestAnimationFrame(moonFrame);
