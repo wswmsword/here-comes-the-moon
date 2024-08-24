@@ -1,6 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
 
 export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons = ["🌑", "🌘", "🌗", "🌖", "🌕", "🌔", "🌓", "🌒"], frameTm = 48, dur = 208, onEnd = () => {} }, ref) {
+
   const [_moons, setM] = useState(moons);
   /** 当前月亮编号 */
   const curIRef = useRef(0);
@@ -8,8 +9,12 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
   const moonRefs = useRef([]);
   /** 是否正在动画 */
   const transformingRef = useRef(false);
+  /** 帧是否结束 */
+  const frameEndRef = useRef(true);
   /** 帧元素的 z-index，每一帧递增 */
   const zIdRef = useRef(0);
+  /** 第一次 toggle 标记 */
+  const bookFirstToggleRef = useRef(false);
 
   const _breakI = [].concat(breakI).filter(n => n != null);
   const breakIRef = useRef(_breakI);
@@ -33,8 +38,13 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
     play,
     stop() {
       transformingRef.current = false;
+      frameEndRef.current = true;
     },
-    toggle,
+    toggle() {
+      if (bookFirstToggleRef.current) toggle();
+      play(true);
+      bookFirstToggleRef.current = true;
+    },
   }));
 
   return <><span style={{ position: "relative", transition: `visibility ${dur}ms, opacity ${dur}ms` }} role="presentation">
@@ -58,11 +68,11 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
     }
   }
 
-  function play() {
+  function play(isToggle) {
 
-    if (transformingRef.current) return;
-
+    if (isToggle ? !frameEndRef.current : transformingRef.current) return;
     transformingRef.current = true; // 上锁
+    frameEndRef.current = false; // 上锁
 
     let prevTime = document.timeline.currentTime;
 
@@ -74,15 +84,15 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
 
     function moonFrame(timestamp) {
 
-      if (!transformingRef.current) return;
+      if (isToggle ? frameEndRef.current : !transformingRef.current) return;
 
       if (timestamp - prevTime > frameTm) { // 间隔时间
 
         const curI = (curIRef.current + 1) % len;
-        // console.log(curI);
+
         curIRef.current = curI;
         zIdRef.current += 1;
-        
+
         prevTime = timestamp;
         moonRefs.current[curI].style.opacity = 1;
         moonRefs.current[curI].style.visibility = '';
@@ -90,7 +100,7 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
         moonRefs.current[curI].style.transition = "inherit";
 
         // 新月和满月，结束
-        if (breakIRef.current.some(i => i === curI)) return ;
+        if (breakIRef.current.some(i => i === curI)) return frameEndRef.current = true;
       }
 
       window.requestAnimationFrame(moonFrame);
@@ -98,14 +108,12 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
   }
 
   function toggle() {
-
-    if (!transformingRef.current) return play();
     
     const reversedMoons = _moons.toReversed();
     const curI = curIRef.current;
 
     if (len & 1 === 1 && (len - 1) / 2 === curI) {
-      _moons.current = reversedMoons
+      _moons.current = reversedMoons;
       setM(_moons.current);
       breakIRef.current = breakIRef.current.map(bI => (bI + len) % len);
     } else {
@@ -117,7 +125,7 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
 
       const times = Math.min(edgeOffset, centerOffset) - 1;
 
-      const isPop = ((curI < len / 2) && edgeOffset < centerOffset) || ((curI >= len / 2) && centerOffset < edgeOffset)
+      const isPop = ((curI < len / 2) && edgeOffset < centerOffset) || ((curI >= len / 2) && centerOffset < edgeOffset);
 
       breakIRef.current = breakIRef.current.map(bI => isPop ? (bI + times - 1) % len : (bI - times + len - 1) % len);
 
