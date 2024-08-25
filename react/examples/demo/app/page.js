@@ -1,13 +1,13 @@
 "use client"
 
-import Moon from "here-comes-the-moon";
+import Moon from "here-comes-the-moon-react";
 import { useRef } from "react";
 
 export default function Home() {
   const moonRef = useRef();
   return (
     <main className="flex min-h-screen flex-col items-center p-24 gap-8">
-      <Moon ref={moonRef} breakI={[0, 4]} />
+      <Moon ref={moonRef} breakI={[0, 4]} moonClassName="text-5xl" />
       <div style={{ display: "flex", gap: 9 }}>
         <button onClick={() => {
           moonRef.current.play();

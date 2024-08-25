@@ -12,7 +12,7 @@
     "react": "^18",
     "react-dom": "^18",
     "next": "14.2.5",
-    "here-comes-the-moon": "file:../.."
+    "here-comes-the-moon-react": "file:../.."
   },
   "devDependencies": {
     "postcss": "^8",
