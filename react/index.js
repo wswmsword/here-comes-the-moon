@@ -1,6 +1,6 @@
 import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
 
-export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons = ["🌑", "🌘", "🌗", "🌖", "🌕", "🌔", "🌓", "🌒"], frameTm = 48, dur = 208, onEnd = () => {} }, ref) {
+export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons = ["🌑", "🌘", "🌗", "🌖", "🌕", "🌔", "🌓", "🌒"], frameTm = 48, dur = 208, onEnd = () => {}, moonClassName }, ref) {
 
   const [_moons, setM] = useState(moons);
   /** 当前月亮编号 */
@@ -24,6 +24,7 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
   const spanMoons = _moons.map((m, i) => {
     const isCur = defaultI === i;
     return <span
+      className={moonClassName}
       onTransitionEnd={hidePrevFrame(i)}
       style={{
         position: "absolute",
@@ -48,7 +49,7 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
   }));
 
   return <><span style={{ position: "relative", transition: `visibility ${dur}ms, opacity ${dur}ms` }} role="presentation">
-    <span aria-hidden style={{ visibility: "hidden" }}>{moons[0]}</span>
+    <span className={moonClassName} aria-hidden style={{ visibility: "hidden" }}>{moons[0]}</span>
     {spanMoons}
   </span></>;
 
@@ -112,12 +113,12 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
     const reversedMoons = _moons.toReversed();
     const curI = curIRef.current;
 
-    if (len & 1 === 1 && (len - 1) / 2 === curI) {
+    if (len & 1 === 1 && (len - 1) / 2 === curI) { // 奇数长度，且当前帧位于正中间
       _moons.current = reversedMoons;
       setM(_moons.current);
       breakIRef.current = breakIRef.current.map(bI => (bI + len) % len);
     } else {
-
+      /** 当前位置，和当前位置的对称位置，之间的长度 */
       const centerOffset = (curI + 1) > (len / 2) ? (curI + 1) * 2 - len : len - curI * 2;
 
       const newMoons = [...reversedMoons];
@@ -125,6 +126,7 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
 
       const times = Math.min(edgeOffset, centerOffset) - 1;
 
+      /** pop，整体右移，尾部移出的元素推入头部 */
       const isPop = ((curI < len / 2) && edgeOffset < centerOffset) || ((curI >= len / 2) && centerOffset < edgeOffset);
 
       breakIRef.current = breakIRef.current.map(bI => isPop ? (bI + times - 1) % len : (bI - times + len - 1) % len);
