@@ -1,6 +1,6 @@
 import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
 
-export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons = ["🌑", "🌘", "🌗", "🌖", "🌕", "🌔", "🌓", "🌒"], frameTm = 48, dur = 208, onEnd = () => {}, moonClassName }, ref) {
+export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons = ["🌑", "🌘", "🌗", "🌖", "🌕", "🌔", "🌓", "🌒"], frameTm = 48, dur = 208, onEnd = () => {}, moonClassName, className }, ref) {
 
   const [_moons, setM] = useState(moons);
   /** 当前月亮编号 */
@@ -48,10 +48,10 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
     },
   }));
 
-  return <><span style={{ position: "relative", transition: `visibility ${dur}ms, opacity ${dur}ms` }} role="presentation">
+  return <span className={className} style={{ position: "relative", transition: `visibility ${dur}ms, opacity ${dur}ms` }} role="presentation">
     <span className={moonClassName} aria-hidden style={{ visibility: "hidden" }}>{moons[0]}</span>
     {spanMoons}
-  </span></>;
+  </span>;
 
   function hidePrevFrame(i) {
     return function(e) {
