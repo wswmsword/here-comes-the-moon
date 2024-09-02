@@ -7,7 +7,7 @@
 ## Docs
 
 - React，[here-comes-the-moon-react](./react/README.md)；
-- Vue，计划开发中；
+- Vue，开发中；
 - Svelte，计划开发中；
 - SolidJS，计划开发中；
 - Angular，计划开发中。
