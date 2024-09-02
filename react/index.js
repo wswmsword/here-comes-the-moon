@@ -81,9 +81,9 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
     moonRefs.current[curIRef.current].style.zIndex = 0;
     zIdRef.current = 0;
 
-    window.requestAnimationFrame(moonFrame);
+    window.requestAnimationFrame(spinLunarPhases);
 
-    function moonFrame(timestamp) {
+    function spinLunarPhases(timestamp) {
 
       if (isToggle ? frameEndRef.current : !transformingRef.current) return;
 
@@ -104,7 +104,7 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
         if (breakIRef.current.some(i => i === curI)) return frameEndRef.current = true;
       }
 
-      window.requestAnimationFrame(moonFrame);
+      window.requestAnimationFrame(spinLunarPhases);
     }
   }
 
