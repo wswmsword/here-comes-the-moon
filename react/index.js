@@ -9,7 +9,7 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
   const moonRefs = useRef([]);
   /** 是否正在动画 */
   const transformingRef = useRef(false);
-  /** 帧是否结束 */
+  /** 帧是否结束，相比 transformingRef 更早 */
   const frameEndRef = useRef(true);
   /** 帧元素的 z-index，每一帧递增 */
   const zIdRef = useRef(0);
@@ -129,7 +129,7 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
       /** pop，整体右移，尾部移出的元素推入头部 */
       const isPop = ((curI < len / 2) && edgeOffset < centerOffset) || ((curI >= len / 2) && centerOffset < edgeOffset);
 
-      breakIRef.current = breakIRef.current.map(bI => isPop ? (bI + times - 1) % len : (bI - times + len - 1) % len);
+      breakIRef.current = breakIRef.current.map(bI => mirrorN(len, curI, bI));
 
       for (let i = 0; i < times; ++ i) {
 
@@ -145,3 +145,10 @@ export default forwardRef(function Moon({ defaultI = 0, breakI = [0, 4], moons =
     }
   }
 })
+
+/** 获得 n 基于 base 的镜像 */
+function mirrorN(total, base, n) {
+  const a = base - n;
+  const b = (base - (-1) * a + total) % total;
+  return b;
+}
