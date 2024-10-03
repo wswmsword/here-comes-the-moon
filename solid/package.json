@@ -1,0 +1,51 @@
+{
+  "name": "here-comes-the-moon-solid",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "watch": "npm-watch",
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "npm-watch": "^0.13.0",
+    "rollup": "^3.29.4",
+    "rollup-preset-solid": "^2.0.1"
+  },
+  "source": "index.jsx",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "solid": "./dist/source/index.jsx",
+      "import": "./dist/esm/index.js",
+      "browser": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "node": "./dist/cjs/index.js"
+    }
+  },
+  "peerDependencies": {
+    "solid-js": "^1.8.22"
+  },
+  "watch": {
+    "build": {
+      "patterns": [
+        "*"
+      ],
+      "extensions": "css, js, jsx",
+      "ignore": [
+        "dist",
+        "node_modules",
+        "examples"
+      ]
+    }
+  }
+}
